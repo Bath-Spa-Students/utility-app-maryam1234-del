@@ -1,0 +1,98 @@
+import random
+
+class VendingMachine:
+    def __init__(self):
+        # Initialize the vending machine with a menu of items
+        self.menu = {
+            'A1': {'name': 'Dew', 'category': 'Drinks', 'price': 1.50, 'stock': 5},
+            'A2': {'name': 'sting', 'category': 'Drinks', 'price': 1.00, 'stock': 10},
+            'B1': {'name': 'Water', 'category': 'Drinks', 'price': 0.75, 'stock': 7},
+            'B2': {'name': 'fanta', 'category': 'Drinks', 'price': 1.25, 'stock': 8},
+            'C1': {'name': 'Chips', 'category': 'snacks', 'price': 2.00, 'stock': 5},
+            'C2': {'name': 'chocolate', 'category': 'snacks', 'price': 2.00, 'stock': 5},
+            'D1': {'name': 'cookies', 'category': 'snacks', 'price': 2.00, 'stock': 5},
+            'D2': {'name': 'biscuit', 'category': 'snacks', 'price': 2.00, 'stock': 5},
+            'E1': {'name': 'panadol', 'category': 'medicine', 'price': 2.00, 'stock': 5},
+        }
+        #we  added 3 categories in our vending machine
+        #first 4 category is for snacks
+        #second 4 category is for drinks
+        #and last category is for medicine
+
+    def display_menu(self):
+        # Display the items available in the vending machine
+        print("Welcome to the Vending Machine!")
+        print("Menu:")
+        for code, item in self.menu.items():
+            print(f"{code}: {item['name']} ({item['category']}) - ${item['price']:.2f} ({item['stock']} available)") 
+            #here we will (display welcome to the vending machine)  and (menu) at start .
+
+    def get_user_input(self):
+         # Get the item code from the user
+        return input("Enter the code of the item you want to purchase: ").upper()
+
+    def get_user_money(self):
+        # Get the amount of money inserted by the user
+        try:
+            money = float(input("Insert money: $"))
+            return money
+        except ValueError:
+            print("Invalid input. Please enter a valid amount.")
+            return self.get_user_money()
+
+    def select_item(self, item_code):
+        # Select an item based on the user's input
+        if item_code in self.menu:
+            return self.menu[item_code]
+        else:
+            print("Invalid code. Please enter a valid code.")
+            return self.select_item(self.get_user_input())
+
+    def calculate_change(self, item_price, user_money):
+        # Calculate the change to return to the user
+        return user_money - item_price
+
+    def dispense_item(self, item):
+          # Dispense the selected item
+        print(f"Dispensing {item['name']}...")
+
+    def return_change(self, change):
+        # Return the change to the user
+        print(f"Change: ${change:.2f}")
+
+    def suggest_purchase(self, item):
+        # Suggest an additional purchase if the item is a
+        if item['category'] == 'Drinks':
+            print("Would you like to add biscuits to your order?")
+
+    def update_stock(self, item_code):
+        # Update the stock after an item is purchased
+        if self.menu[item_code]['stock'] > 0:
+            self.menu[item_code]['stock'] -= 1
+        else:
+            print("Sorry, this item is out of stock. Please make another selection.")
+            return False
+        return True
+    #now else option is being used
+
+    def run(self):
+        self.display_menu()
+        item_code = self.get_user_input()
+        selected_item = self.select_item(item_code)
+
+        if self.update_stock(item_code):
+            user_money = self.get_user_money()
+
+            if user_money >= selected_item['price']:
+                change = self.calculate_change(selected_item['price'], user_money)
+                self.dispense_item(selected_item)
+                self.return_change(change)
+                self.suggest_purchase(selected_item)
+                print("Thank you for purchasing!")
+            else:
+                print("Insufficient funds. Please insert more money.")
+
+
+#  Now Run the vending machine
+vending_machine = VendingMachine()
+vending_machine.run()
